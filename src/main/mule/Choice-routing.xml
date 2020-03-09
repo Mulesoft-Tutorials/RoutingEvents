@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="Choice-routingFlow" doc:id="23f0925a-6ce4-4342-80e6-1fad879d7465" >
+		<http:listener doc:name="Listener" doc:id="56b951b8-e62e-4256-a880-84b224d4393a" config-ref="HTTP_Listener_config" path="/*"/>
+		<set-variable value="#[attributes.requestPath]" doc:name="Set Variable" doc:id="45d65cb5-af53-46f9-a496-90a1e3a8176f" variableName="varRequestPath"/>
+		<choice doc:name="Choice" doc:id="440d7a17-8188-496f-b729-e8b9ca0d1c36" >
+			<when expression="#[vars.varRequestPath == '/rest']">
+				<flow-ref doc:name="Flow Reference" doc:id="03c4cba2-88c2-43a5-b507-40d46d9fb3ef" name="Get-Users"/>
+			</when>
+			<when expression="#[vars.varRequestPath == '/soap']">
+				<flow-ref doc:name="Flow Reference" doc:id="369cf155-7918-4f8a-b568-f7c3d7fe2f93" name="soap-ws"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d934471c-bd41-4d60-a8aa-abcf6d74756d" message="#['The resource path does not match..' ++ attributes.requestPath]"/>
+				<ee:transform doc:name="Transform Message" doc:id="15198597-084e-464e-b904-0665eb9a5918" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"msg": 'The resource path does not match..' ++ attributes.requestPath
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="de46b640-69bd-460f-a3b5-955e2401793b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="527ed703-94cf-419b-89fe-968cd833e3a4" >
+		<wsc:connection wsdlLocation="http://mu.learn.mulesoft.com/delta?wsdl" service="TicketServiceService" port="TicketServicePort" address="http://mu.learn.mulesoft.com/delta" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<sub-flow name="Get-DummyEmployees" doc:id="f1805a09-bbf5-479c-9578-1b0f9158fbc6" >
+		<http:request method="GET" doc:name="Request" doc:id="fff94bb5-86f0-4163-af1a-7d70ee9c2fd4" config-ref="HTTP_Request_configuration" path="/api/v1/employees" />
+	</sub-flow>
+	<sub-flow name="Get-Users" doc:id="29522651-7bad-4d2c-b678-57a11ff9a980" >
+		<http:request method="GET" doc:name="Request" doc:id="be73bc91-53c6-4c05-bb73-cda3c12e90e9" config-ref="HTTP_Request_configuration1" path="/api/users"/>
+	</sub-flow>
+	<sub-flow name="soap-ws" doc:id="07bf0c14-e0f8-4b83-b98f-adceb35363b8" >
+		<wsc:consume doc:name="Consume" doc:id="1bb9c8b2-326f-46b9-950a-a9fad3c243b4" config-ref="Web_Service_Consumer_Config" operation="listAllFlights"/>
+	</sub-flow>
+	
+</mule>

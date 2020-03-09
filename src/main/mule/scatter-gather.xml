@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="scatter-gatherFlow" doc:id="0fe061ce-7b22-422b-b18b-a132463f7336" >
+		<http:listener doc:name="Listener" doc:id="ced7344d-b92f-40ed-8725-8fb78c38b621" config-ref="HTTP_Listener_config" path="/getAllUsers"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="e24e4683-4e1c-4c9b-9a73-87b07c5c18f3" >
+			<route >
+				<flow-ref doc:name="Call-DummyEmployees" doc:id="8d030709-44d5-483e-8a78-433f6538e5bd" name="Get-DummyEmployees" />
+			</route>
+			<route >
+				<flow-ref doc:name="Call-Users" doc:id="8d66e65f-033e-4379-b262-c938b7bc6fb1" name="Get-Users" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="53698859-9ea6-45db-9281-c4d1807e588b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+</mule>
